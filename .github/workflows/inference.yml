@@ -1,0 +1,35 @@
+name: Inference
+
+on:
+  workflow_dispatch:
+    inputs:
+      input_text:
+        description: "Text to classify"
+        required: true
+        default: "Congratulations! You have won a free prize!"
+
+jobs:
+  run-inference:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install transformers torch --index-url https://download.pytorch.org/whl/cpu huggingface_hub
+
+      - name: Run inference
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          MODEL_REPO: G25AIT2100/sms-spam-distilbert
+          INPUT_TEXT: ${{ github.event.inputs.input_text }}
+        run: |
+          python src/inference.py
