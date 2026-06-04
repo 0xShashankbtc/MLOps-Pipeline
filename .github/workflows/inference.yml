@@ -1,0 +1,24 @@
+name: Inference
+
+on:
+  workflow_dispatch:
+    inputs:
+      input_text:
+        description: 'Text to classify'
+        required: true
+
+jobs:
+  infer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          pip install transformers torch huggingface_hub
+      - env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          MODEL_REPO: G25AIT2100/sms-spam-distilbert
+          INPUT_TEXT: ${{ github.event.inputs.input_text }}
+        run: python src/inference.py
