@@ -1,14 +1,8 @@
 from transformers import pipeline
-import json
 import os
 
 MODEL_REPO = os.getenv("MODEL_REPO", "G25AIT2100/sms-spam-distilbert")
-
 classifier = pipeline("text-classification", model=MODEL_REPO)
-
-with open("id2label.json") as f:
-    id2label = json.load(f)
-
 
 def predict(text: str) -> dict:
     result = classifier(text)[0]
@@ -17,7 +11,6 @@ def predict(text: str) -> dict:
         "label": result["label"],
         "score": round(result["score"], 4)
     }
-
 
 if __name__ == "__main__":
     samples = [
